@@ -6,18 +6,18 @@ import java.util.List;
 
 public class CreateRecipeRequest extends BaseRequest {
 
-    private String name;
-    private String blurb;
-    private String description;
     private String author;
+    private String blurb;
+    private String title;
+    private String body;
     private List<String> tags;
 
-    public String getName() {
-        return name;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public String getBlurb() {
@@ -28,20 +28,20 @@ public class CreateRecipeRequest extends BaseRequest {
         this.blurb = blurb;
     }
 
-    public String getDescription() {
-        return description;
+    public String getTitle() {
+        return title;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getBody() {
+        return body;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setBody(String body) {
+        this.body = body;
     }
 
     public List<String> getTags() {
@@ -55,10 +55,10 @@ public class CreateRecipeRequest extends BaseRequest {
     @Override
     public String toString() {
         return "CreateRecipeRequest{" +
-                "name='" + name + '\'' +
+                "author='" + author + '\'' +
                 ", blurb='" + blurb + '\'' +
-                ", description='" + description + '\'' +
-                ", author='" + author + '\'' +
+                ", title='" + title + '\'' +
+                ", body='" + body + '\'' +
                 ", tags=" + tags +
                 '}';
     }

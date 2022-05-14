@@ -12,6 +12,7 @@
     <modules>
         <module>service</module>
         <module>common</module>
+        <module>storage</module>
     </modules>
     <groupId>xyz.slimjim</groupId>
     <artifactId>hungrytales</artifactId>

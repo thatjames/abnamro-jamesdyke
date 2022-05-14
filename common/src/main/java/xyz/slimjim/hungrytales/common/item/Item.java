@@ -1,4 +1,4 @@
 package xyz.slimjim.hungrytales.common.item;
 
-public class Item {
+public abstract class Item {
 }
