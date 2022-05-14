@@ -1,14 +1,24 @@
 package xyz.slimjim.hungrytales.common.item;
 
+import xyz.slimjim.hungrytales.common.cooking.CookingStep;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 
 public class RecipeItem extends Item {
 
     private String author;
-    private String blurb;
     private String title;
-    private String body;
     private List<String> tags;
+    private LocalDateTime createdDatetime;
+    private boolean isVegetarian;
+    private int feeds;
+    private List<IngredientItem> ingredients;
+    private List<CookingStep> instructions;
 
     public String getAuthor() {
         return author;
@@ -16,14 +26,6 @@ public class RecipeItem extends Item {
 
     public void setAuthor(String author) {
         this.author = author;
-    }
-
-    public String getBlurb() {
-        return blurb;
-    }
-
-    public void setBlurb(String blurb) {
-        this.blurb = blurb;
     }
 
     public String getTitle() {
@@ -34,14 +36,6 @@ public class RecipeItem extends Item {
         this.title = title;
     }
 
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
     public List<String> getTags() {
         return tags;
     }
@@ -50,14 +44,53 @@ public class RecipeItem extends Item {
         this.tags = tags;
     }
 
-    @Override
-    public String toString() {
-        return "RecipeItem{" +
-                "author='" + author + '\'' +
-                ", blurb='" + blurb + '\'' +
-                ", title='" + title + '\'' +
-                ", body='" + body + '\'' +
-                ", tags=" + tags +
-                '}';
+    public LocalDateTime getCreatedDatetime() {
+        return createdDatetime;
     }
+
+    public void setCreatedDatetime(LocalDateTime createdDatetime) {
+        this.createdDatetime = createdDatetime;
+    }
+
+    public void setCreatedDatetime(String createdDatetime) {
+        this.createdDatetime = LocalDateTime.parse(createdDatetime, DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+    }
+
+    public void setCreatedDatetime(Integer unixTimestamp) {
+        this.createdDatetime = LocalDateTime.ofInstant(Instant.ofEpochSecond(unixTimestamp.longValue()), ZoneId.systemDefault());
+    }
+
+    public boolean isVegetarian() {
+        return isVegetarian;
+    }
+
+    public void setVegetarian(boolean vegetarian) {
+        isVegetarian = vegetarian;
+    }
+
+    public int getFeeds() {
+        return feeds;
+    }
+
+    public void setFeeds(int feeds) {
+        this.feeds = feeds;
+    }
+
+    public List<IngredientItem> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(List<IngredientItem> ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    public List<CookingStep> getInstructions() {
+        Collections.sort(instructions);
+        return instructions;
+    }
+
+    public void setInstructions(List<CookingStep> instructions) {
+        this.instructions = instructions;
+    }
+
 }

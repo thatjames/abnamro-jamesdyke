@@ -12,10 +12,12 @@ public class CreateRecipeConverter extends ItemRequestConverter<RecipeItem> {
         RecipeItem item = new RecipeItem();
         CreateRecipeRequest createRecipeRequest = (CreateRecipeRequest) request;
         item.setAuthor(createRecipeRequest.getAuthor());
-        item.setBlurb(createRecipeRequest.getBlurb());
-        item.setBody(createRecipeRequest.getBody());
         item.setTags(createRecipeRequest.getTags());
         item.setTitle(createRecipeRequest.getTitle());
+        item.setCreatedDatetime(createRecipeRequest.getCreatedDatetime());
+        item.setVegetarian(createRecipeRequest.isVegetarian());
+        item.setInstructions(createRecipeRequest.getInstructions());
+        item.setFeeds(createRecipeRequest.getFeeds());
         return item;
     }
 }
