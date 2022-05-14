@@ -6,7 +6,6 @@ import xyz.slimjim.hungrytales.common.item.RecipeItem;
 import xyz.slimjim.hungrytales.common.request.CreateRecipeRequest;
 import xyz.slimjim.hungrytales.common.request.UpdateRecipeRequest;
 import xyz.slimjim.hungrytales.common.response.BaseResponse;
-import xyz.slimjim.hungrytales.common.response.RecipeResponse;
 import xyz.slimjim.hungrytales.service.api.RecipeService;
 
 import java.util.List;
@@ -20,9 +19,9 @@ public class RecipeController {
 
     @GetMapping("/{id}")
     public BaseResponse<RecipeItem> getRecipe(@PathVariable Integer id) {
+        BaseResponse<RecipeItem> itemResponse = new BaseResponse<>();
         RecipeItem item = recipeService.getRecipe(id);
-        RecipeResponse itemResponse = new RecipeResponse();
-        itemResponse.setId(id);
+        item.setId(id);
         itemResponse.setResult(true);
         itemResponse.setErrorMessage("");
         itemResponse.setData(item);
@@ -35,8 +34,10 @@ public class RecipeController {
     }
 
     @PostMapping("/create")
-    public void createRecipe(@RequestBody CreateRecipeRequest request) {
-        recipeService.createRecipe(request);
+    public BaseResponse<Integer> createRecipe(@RequestBody CreateRecipeRequest request) {
+        BaseResponse<Integer> baseResponse = new BaseResponse<>();
+        baseResponse.setData(recipeService.createRecipe(request));
+        return baseResponse;
     }
 
     @DeleteMapping("/{id}")

@@ -14,7 +14,7 @@ import java.util.List;
 @Component
 public interface RecipeService {
 
-    void createRecipe(CreateRecipeRequest createRequest);
+    int createRecipe(CreateRecipeRequest createRequest);
 
     void updateRecipe(UpdateRecipeRequest updateRecipeRequest);
 

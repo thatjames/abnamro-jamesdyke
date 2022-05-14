@@ -6,6 +6,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,6 +20,11 @@ public class RecipeItem extends Item {
     private int feeds;
     private List<IngredientItem> ingredients;
     private List<CookingStep> instructions;
+
+    public RecipeItem() {
+        ingredients = new ArrayList<>();
+        instructions = new ArrayList<>();
+    }
 
     public String getAuthor() {
         return author;

@@ -1,10 +1,10 @@
 package xyz.slimjim.hungrytales.storage.service;
 
 import org.springframework.stereotype.Component;
-import xyz.slimjim.hungrytales.storage.item.ItemDO;
+import xyz.slimjim.hungrytales.common.item.Item;
 
 @Component
-public interface ItemDOStorageService<I extends ItemDO> {
+public interface ItemStorageService<I extends Item> {
 
     int store(I itemDO);
 
