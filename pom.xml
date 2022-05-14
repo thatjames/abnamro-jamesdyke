@@ -11,7 +11,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>service</module>
-        <module>web</module>
+        <module>common</module>
     </modules>
     <groupId>xyz.slimjim</groupId>
     <artifactId>hungrytales</artifactId>
@@ -38,6 +38,13 @@
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
