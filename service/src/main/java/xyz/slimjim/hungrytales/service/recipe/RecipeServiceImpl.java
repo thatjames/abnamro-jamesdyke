@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import xyz.slimjim.hungrytales.common.recipe.Recipe;
 import xyz.slimjim.hungrytales.service.api.RecipeService;
-import xyz.slimjim.hungrytales.storage.service.DAO;
+import xyz.slimjim.hungrytales.storage.service.DataObjectDAO;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
 public class RecipeServiceImpl implements RecipeService {
 
     @Autowired
-    private DAO<Recipe> itemStorageService;
+    private DataObjectDAO<Recipe> itemStorageService;
 
     @Override
     public int createRecipe(Recipe createRequest) {

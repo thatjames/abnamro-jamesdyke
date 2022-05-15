@@ -6,7 +6,7 @@ import xyz.slimjim.hungrytales.common.dataobject.DataObject;
 import java.util.List;
 
 @Component
-public interface DAO<I extends DataObject> {
+public interface DataObjectDAO<I extends DataObject> {
 
     int store(I itemDO);
 

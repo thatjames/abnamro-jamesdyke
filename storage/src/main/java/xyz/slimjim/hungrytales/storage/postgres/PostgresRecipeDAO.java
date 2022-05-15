@@ -16,12 +16,12 @@ import xyz.slimjim.hungrytales.common.recipe.Ingredient;
 import xyz.slimjim.hungrytales.common.recipe.Recipe;
 import xyz.slimjim.hungrytales.storage.preparedstatement.batch.IngredientsPreparedStatementSetter;
 import xyz.slimjim.hungrytales.storage.preparedstatement.batch.InstructionsPreparedStatementSetter;
-import xyz.slimjim.hungrytales.storage.service.DAO;
+import xyz.slimjim.hungrytales.storage.service.DataObjectDAO;
 
 import java.util.List;
 
 @Repository
-public class PostgresRecipeDAO implements DAO<Recipe> {
+public class PostgresRecipeDAO implements DataObjectDAO<Recipe> {
 
     private static final String RECIPE_SELECT_ID = "select * from recipe where id = ?";
     private static final String RECIPE_INGREDIENTS_SELECT_FROM_RECIPE_ID = "select name, unit, amount from recipe_ingredients where recipe_id = ?";
