@@ -1,9 +1,13 @@
 package xyz.slimjim.hungrytales.web.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 public class WebResponse<R> {
 
     protected boolean result;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     protected String errorMessage;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     protected R data;
 
     public boolean isResult() {

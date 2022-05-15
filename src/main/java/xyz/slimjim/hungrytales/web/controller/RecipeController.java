@@ -93,6 +93,7 @@ public class RecipeController {
             RecipeCreateResultDTO result = new RecipeCreateResultDTO();
             result.setRecipeId(recipeService.createRecipe(converter.fromDTOToItem(request)));
             dtoResponse.setData(result);
+            dtoResponse.setResult(true);
         } catch (Exception ex) {
             log.error("Unable to update recipe", ex);
             dtoResponse.setErrorMessage(ex.getMessage());
@@ -111,6 +112,7 @@ public class RecipeController {
         }
         try {
             recipeService.deleteRecipe(id);
+            dtoResponse.setResult(true);
         } catch (Exception ex) {
             log.error("Unable to delete recipe", ex);
             dtoResponse.setErrorMessage(ex.getMessage());
@@ -120,8 +122,19 @@ public class RecipeController {
     }
 
     @GetMapping("/list")
-    public List<RecipeDTO> getAll() {
+    public WebResponse<List<RecipeDTO>> getAll(HttpServletResponse response) {
+        log.info("list all recipes");
+        WebResponse<List<RecipeDTO>> dtoResponse = new WebResponse<>();
         RecipeItemDTOConverter converter = new RecipeItemDTOConverter();
-        return recipeService.getAllItems().stream().map(converter::fromItemToDTO).collect(Collectors.toList());
+        try {
+            dtoResponse.setData(recipeService.getAllItems().stream().map(converter::fromItemToDTO).collect(Collectors.toList()));
+            dtoResponse.setResult(true);
+        } catch (Exception ex) {
+            log.error("Unable to list recipes", ex);
+            dtoResponse.setErrorMessage(ex.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+        }
+        return dtoResponse;
     }
 }

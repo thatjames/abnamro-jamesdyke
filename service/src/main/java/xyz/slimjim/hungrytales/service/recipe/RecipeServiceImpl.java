@@ -36,6 +36,6 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public List<RecipeItem> getAllItems() {
-        return null;
+        return itemStorageService.listAll();
     }
 }

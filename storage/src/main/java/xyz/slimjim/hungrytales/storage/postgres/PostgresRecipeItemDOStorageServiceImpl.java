@@ -7,6 +7,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.slimjim.hungrytales.common.cooking.CookingStep;
@@ -18,7 +19,11 @@ import xyz.slimjim.hungrytales.storage.preparedstatement.batch.IngredientsPrepar
 import xyz.slimjim.hungrytales.storage.preparedstatement.batch.InstructionsPreparedStatementSetter;
 import xyz.slimjim.hungrytales.storage.service.ItemStorageService;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class PostgresRecipeItemDOStorageServiceImpl implements ItemStorageService<RecipeItem> {
@@ -32,6 +37,9 @@ public class PostgresRecipeItemDOStorageServiceImpl implements ItemStorageServic
     private static final String DELETE_RECIPE_AND_INSTRUCTIONS_DEPENDENCIES_BY_ID = "delete from recipe_ingredients where recipe_id = ?; delete from recipe_instructions where recipe_id = ?";
     private static final String UPDATE_RECIPE = "update recipe set title=?, author=?, created_datetime=?, is_vegetarian=?, feeds=? where id=?";
     private static final String DELETE_RECIPE = "delete from recipe where id = ?";
+    private static final String SELECT_ALL_RECIPES = "select * from recipe";
+    private static final String SELECT_ALL_RECIPE_INSTRUCTIONS = "select step_number, instruction from recipe_instructions where recipe_id = ?";
+    private static final String SELECT_ALL_RECIPE_INGREDIENTS = "select name, amount, unit from recipe_ingredients where recipe_id = ?";
 
     private static final Logger log = LoggerFactory.getLogger(PostgresRecipeItemDOStorageServiceImpl.class);
 
@@ -85,7 +93,21 @@ public class PostgresRecipeItemDOStorageServiceImpl implements ItemStorageServic
     public void delete(int id) {
         try {
             jdbcTemplate.update(DELETE_RECIPE, id);
-            jdbcTemplate.update(DELETE_RECIPE_AND_INSTRUCTIONS_DEPENDENCIES_BY_ID, id);
+            jdbcTemplate.update(DELETE_RECIPE_AND_INSTRUCTIONS_DEPENDENCIES_BY_ID, id, id);
+        } catch (DataAccessException dax) {
+            throw new HungryTalesException("Postgres error occurred", dax);
+        }
+    }
+
+    @Override
+    public List<RecipeItem> listAll() {
+        try {
+            List<RecipeItem> recipeItems = jdbcTemplate.query(SELECT_ALL_RECIPES, BeanPropertyRowMapper.newInstance(RecipeItem.class));
+            for (RecipeItem item : recipeItems) {
+                item.setInstructions(jdbcTemplate.query(SELECT_ALL_RECIPE_INSTRUCTIONS, BeanPropertyRowMapper.newInstance(CookingStep.class), item.getId()));
+                item.setIngredients(jdbcTemplate.query(SELECT_ALL_RECIPE_INGREDIENTS, BeanPropertyRowMapper.newInstance(IngredientItem.class), item.getId()));
+            }
+            return recipeItems;
         } catch (DataAccessException dax) {
             throw new HungryTalesException("Postgres error occurred", dax);
         }
