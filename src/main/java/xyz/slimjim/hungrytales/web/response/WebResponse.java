@@ -1,6 +1,6 @@
-package xyz.slimjim.hungrytales.common.response;
+package xyz.slimjim.hungrytales.web.response;
 
-public class BaseResponse<R> {
+public class WebResponse<R> {
 
     protected boolean result;
     protected String errorMessage;

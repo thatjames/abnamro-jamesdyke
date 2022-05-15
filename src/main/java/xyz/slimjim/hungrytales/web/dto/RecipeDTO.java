@@ -1,23 +1,18 @@
-package xyz.slimjim.hungrytales.common.request;
+package xyz.slimjim.hungrytales.web.dto;
 
 import xyz.slimjim.hungrytales.common.cooking.CookingStep;
-import xyz.slimjim.hungrytales.common.item.IngredientItem;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
-public class CreateRecipeRequest extends BaseRequest {
+public class RecipeDTO extends BaseDTO {
 
     private String author;
     private String title;
-    private List<String> tags;
-    private LocalDateTime createdDatetime;
+    private String createdDatetime;
     private boolean isVegetarian;
     private int feeds;
-    private List<IngredientItem> ingredients;
-    private List<CookingStep> instructions;
+    private List<IngredientDTO> ingredients;
+    private List<CookingStepDTO> instructions;
 
     public String getAuthor() {
         return author;
@@ -35,20 +30,12 @@ public class CreateRecipeRequest extends BaseRequest {
         this.title = title;
     }
 
-    public List<String> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<String> tags) {
-        this.tags = tags;
-    }
-
-    public LocalDateTime getCreatedDatetime() {
+    public String getCreatedDatetime() {
         return createdDatetime;
     }
 
-    public void setCreatedDatetime(Integer unixTimestamp) {
-        this.createdDatetime = LocalDateTime.ofInstant(Instant.ofEpochSecond(unixTimestamp.longValue()), ZoneId.systemDefault());
+    public void setCreatedDatetime(String createdDatetime) {
+        this.createdDatetime = createdDatetime;
     }
 
     public boolean isVegetarian() {
@@ -67,28 +54,27 @@ public class CreateRecipeRequest extends BaseRequest {
         this.feeds = feeds;
     }
 
-    public List<IngredientItem> getIngredients() {
+    public List<IngredientDTO> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(List<IngredientItem> ingredients) {
+    public void setIngredients(List<IngredientDTO> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public List<CookingStep> getInstructions() {
+    public List<CookingStepDTO> getInstructions() {
         return instructions;
     }
 
-    public void setInstructions(List<CookingStep> instructions) {
+    public void setInstructions(List<CookingStepDTO> instructions) {
         this.instructions = instructions;
     }
 
     @Override
     public String toString() {
-        return "CreateRecipeRequest{" +
+        return "RecipeItemDTO{" +
                 "author='" + author + '\'' +
                 ", title='" + title + '\'' +
-                ", tags=" + tags +
                 ", createdDatetime=" + createdDatetime +
                 ", isVegetarian=" + isVegetarian +
                 ", feeds=" + feeds +

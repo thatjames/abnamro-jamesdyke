@@ -14,7 +14,6 @@ public class RecipeItem extends Item {
 
     private String author;
     private String title;
-    private List<String> tags;
     private LocalDateTime createdDatetime;
     private boolean isVegetarian;
     private int feeds;
@@ -40,14 +39,6 @@ public class RecipeItem extends Item {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public List<String> getTags() {
-        return tags;
-    }
-
-    public void setTags(List<String> tags) {
-        this.tags = tags;
     }
 
     public LocalDateTime getCreatedDatetime() {
@@ -105,7 +96,6 @@ public class RecipeItem extends Item {
                 "id=" + id +
                 ", author='" + author + '\'' +
                 ", title='" + title + '\'' +
-                ", tags=" + tags +
                 ", createdDatetime=" + createdDatetime +
                 ", isVegetarian=" + isVegetarian +
                 ", feeds=" + feeds +

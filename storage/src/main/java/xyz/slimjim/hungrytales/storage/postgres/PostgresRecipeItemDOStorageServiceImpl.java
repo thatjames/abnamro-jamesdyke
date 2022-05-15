@@ -23,14 +23,14 @@ import java.util.List;
 @Repository
 public class PostgresRecipeItemDOStorageServiceImpl implements ItemStorageService<RecipeItem> {
 
-    private static final String RECIPE_SELECT_ID = "select name, unit, amount from recipe_ingredients where recipe_id = ?";
+    private static final String RECIPE_SELECT_ID = "select * from recipe where id = ?";
     private static final String RECIPE_INGREDIENTS_SELECT_FROM_RECIPE_ID = "select name, unit, amount from recipe_ingredients where recipe_id = ?";
     private static final String RECIPE_INSTRUCTIONS_SELECT_FROM_RECIPE_ID = "select step_number, instruction from recipe_instructions where recipe_id = ?";
     private static final String INSERT_RECIPE_ITEM_FOR_ID = "insert into recipe (title, author, created_datetime, is_vegetarian, feeds) values (?, ?, ?, ?, ?) returning id;";
     private static final String INSERT_RECIPE_INSTRUCTION_ID_FOR_RECIPE_ID = "insert into recipe_instructions (recipe_id, step_number, instruction) values (?, ?, ?)";
     private static final String INSERT_RECIPE_INGREDIENTS_ID_FOR_RECIPE_ID = "insert into recipe_ingredients (recipe_id, name, amount, unit) values (?, ?, ?, ?)";
     private static final String DELETE_RECIPE_AND_INSTRUCTIONS_DEPENDENCIES_BY_ID = "delete from recipe_ingredients where recipe_id = ?; delete from recipe_instructions where recipe_id = ?";
-    private static final String UPDATE_RECIPE = "update recipe set title=?, author=?, created_datetime=?, is_vegetarian=?, feeds=?";
+    private static final String UPDATE_RECIPE = "update recipe set title=?, author=?, created_datetime=?, is_vegetarian=?, feeds=? where id=?";
     private static final String DELETE_RECIPE = "delete from recipe where id = ?";
 
     private static final Logger log = LoggerFactory.getLogger(PostgresRecipeItemDOStorageServiceImpl.class);
@@ -42,7 +42,7 @@ public class PostgresRecipeItemDOStorageServiceImpl implements ItemStorageServic
     @Transactional
     public int store(RecipeItem itemDO) {
         try {
-            int recipeId = jdbcTemplate.queryForObject(INSERT_RECIPE_ITEM_FOR_ID, Integer.class, itemDO.getTitle(), itemDO.getAuthor(), itemDO.getCreatedDatetime(), itemDO.isVegetarian(), itemDO.getFeeds());
+            Integer recipeId = jdbcTemplate.queryForObject(INSERT_RECIPE_ITEM_FOR_ID, Integer.class, itemDO.getTitle(), itemDO.getAuthor(), itemDO.getCreatedDatetime(), itemDO.isVegetarian(), itemDO.getFeeds());
             jdbcTemplate.batchUpdate(INSERT_RECIPE_INSTRUCTION_ID_FOR_RECIPE_ID, new InstructionsPreparedStatementSetter(itemDO.getInstructions(), recipeId));
             jdbcTemplate.batchUpdate(INSERT_RECIPE_INGREDIENTS_ID_FOR_RECIPE_ID, new IngredientsPreparedStatementSetter(itemDO.getIngredients(), recipeId));
             return recipeId;
@@ -71,7 +71,7 @@ public class PostgresRecipeItemDOStorageServiceImpl implements ItemStorageServic
     @Transactional
     public void update(RecipeItem itemDO) {
         try {
-            jdbcTemplate.update(UPDATE_RECIPE, itemDO.getTitle(), itemDO.getAuthor(), itemDO.getCreatedDatetime(), itemDO.isVegetarian(), itemDO.getFeeds());
+            jdbcTemplate.update(UPDATE_RECIPE, itemDO.getTitle(), itemDO.getAuthor(), itemDO.getCreatedDatetime(), itemDO.isVegetarian(), itemDO.getFeeds(), itemDO.getId());
             jdbcTemplate.update(DELETE_RECIPE_AND_INSTRUCTIONS_DEPENDENCIES_BY_ID, itemDO.getId(), itemDO.getId());
             jdbcTemplate.batchUpdate(INSERT_RECIPE_INSTRUCTION_ID_FOR_RECIPE_ID, new InstructionsPreparedStatementSetter(itemDO.getInstructions(), itemDO.getId()));
             jdbcTemplate.batchUpdate(INSERT_RECIPE_INGREDIENTS_ID_FOR_RECIPE_ID, new IngredientsPreparedStatementSetter(itemDO.getIngredients(), itemDO.getId()));

@@ -1,9 +1,7 @@
 package xyz.slimjim.hungrytales.service.api;
 
 import org.springframework.stereotype.Component;
-import xyz.slimjim.hungrytales.common.request.CreateRecipeRequest;
 import xyz.slimjim.hungrytales.common.item.RecipeItem;
-import xyz.slimjim.hungrytales.common.request.UpdateRecipeRequest;
 
 import java.util.List;
 
@@ -14,9 +12,9 @@ import java.util.List;
 @Component
 public interface RecipeService {
 
-    int createRecipe(CreateRecipeRequest createRequest);
+    int createRecipe(RecipeItem createRequest);
 
-    void updateRecipe(UpdateRecipeRequest updateRecipeRequest);
+    void updateRecipe(RecipeItem updateRecipeRequest);
 
     void deleteRecipe(int recipeId);
 

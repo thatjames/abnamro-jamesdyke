@@ -3,10 +3,7 @@ package xyz.slimjim.hungrytales.service.recipe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import xyz.slimjim.hungrytales.common.item.RecipeItem;
-import xyz.slimjim.hungrytales.common.request.CreateRecipeRequest;
-import xyz.slimjim.hungrytales.common.request.UpdateRecipeRequest;
 import xyz.slimjim.hungrytales.service.api.RecipeService;
-import xyz.slimjim.hungrytales.service.converter.ItemRequestConverter;
 import xyz.slimjim.hungrytales.storage.service.ItemStorageService;
 
 import java.util.List;
@@ -18,14 +15,12 @@ public class RecipeServiceImpl implements RecipeService {
     private ItemStorageService<RecipeItem> itemStorageService;
 
     @Override
-    public int createRecipe(CreateRecipeRequest createRequest) {
-        ItemRequestConverter<RecipeItem> updateItemRequestConverter = new CreateRecipeConverter();
-        RecipeItem item = updateItemRequestConverter.convertRequest(createRequest);
-        return itemStorageService.store(item);
+    public int createRecipe(RecipeItem createRequest) {
+        return itemStorageService.store(createRequest);
     }
 
     @Override
-    public void updateRecipe(UpdateRecipeRequest updateRecipeRequest) {
+    public void updateRecipe(RecipeItem updateRecipeRequest) {
 
     }
 
