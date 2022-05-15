@@ -17,6 +17,7 @@ public class CreateRecipeConverter extends ItemRequestConverter<RecipeItem> {
         item.setCreatedDatetime(createRecipeRequest.getCreatedDatetime());
         item.setVegetarian(createRecipeRequest.isVegetarian());
         item.setInstructions(createRecipeRequest.getInstructions());
+        item.setIngredients(createRecipeRequest.getIngredients());
         item.setFeeds(createRecipeRequest.getFeeds());
         return item;
     }

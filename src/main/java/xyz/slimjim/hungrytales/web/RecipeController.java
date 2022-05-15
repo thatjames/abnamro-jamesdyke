@@ -35,6 +35,7 @@ public class RecipeController {
 
     @PostMapping("/create")
     public BaseResponse<Integer> createRecipe(@RequestBody CreateRecipeRequest request) {
+        System.out.println(request);
         BaseResponse<Integer> baseResponse = new BaseResponse<>();
         baseResponse.setData(recipeService.createRecipe(request));
         return baseResponse;

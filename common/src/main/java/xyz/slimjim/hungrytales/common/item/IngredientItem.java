@@ -29,4 +29,14 @@ public class IngredientItem extends Item {
     public void setUnit(String unit) {
         this.unit = unit;
     }
+
+    @Override
+    public String toString() {
+        return "IngredientItem{" +
+                "name='" + name + '\'' +
+                ", amount=" + amount +
+                ", unit='" + unit + '\'' +
+                ", id=" + id +
+                '}';
+    }
 }

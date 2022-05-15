@@ -99,4 +99,18 @@ public class RecipeItem extends Item {
         this.instructions = instructions;
     }
 
+    @Override
+    public String toString() {
+        return "RecipeItem{" +
+                "id=" + id +
+                ", author='" + author + '\'' +
+                ", title='" + title + '\'' +
+                ", tags=" + tags +
+                ", createdDatetime=" + createdDatetime +
+                ", isVegetarian=" + isVegetarian +
+                ", feeds=" + feeds +
+                ", ingredients=" + ingredients +
+                ", instructions=" + instructions +
+                '}';
+    }
 }

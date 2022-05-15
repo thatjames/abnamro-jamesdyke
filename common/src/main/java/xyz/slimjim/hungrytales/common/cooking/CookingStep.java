@@ -31,4 +31,12 @@ public class CookingStep implements Comparable<CookingStep>{
             return 0;
         }
     }
+
+    @Override
+    public String toString() {
+        return "CookingStep{" +
+                "stepNumber=" + stepNumber +
+                ", instruction='" + instruction + '\'' +
+                '}';
+    }
 }
