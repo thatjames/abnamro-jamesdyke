@@ -1,12 +1,12 @@
 package xyz.slimjim.hungrytales.storage.service;
 
 import org.springframework.stereotype.Component;
-import xyz.slimjim.hungrytales.common.item.Item;
+import xyz.slimjim.hungrytales.common.dataobject.DataObject;
 
 import java.util.List;
 
 @Component
-public interface ItemStorageService<I extends Item> {
+public interface DAO<I extends DataObject> {
 
     int store(I itemDO);
 

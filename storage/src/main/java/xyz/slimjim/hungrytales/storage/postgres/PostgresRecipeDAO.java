@@ -7,26 +7,21 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import xyz.slimjim.hungrytales.common.cooking.CookingStep;
+import xyz.slimjim.hungrytales.common.recipe.Instruction;
 import xyz.slimjim.hungrytales.common.exceptions.HungryTalesException;
 import xyz.slimjim.hungrytales.common.exceptions.RecordNotFoundException;
-import xyz.slimjim.hungrytales.common.item.IngredientItem;
-import xyz.slimjim.hungrytales.common.item.RecipeItem;
+import xyz.slimjim.hungrytales.common.recipe.Ingredient;
+import xyz.slimjim.hungrytales.common.recipe.Recipe;
 import xyz.slimjim.hungrytales.storage.preparedstatement.batch.IngredientsPreparedStatementSetter;
 import xyz.slimjim.hungrytales.storage.preparedstatement.batch.InstructionsPreparedStatementSetter;
-import xyz.slimjim.hungrytales.storage.service.ItemStorageService;
+import xyz.slimjim.hungrytales.storage.service.DAO;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Repository
-public class PostgresRecipeItemDOStorageServiceImpl implements ItemStorageService<RecipeItem> {
+public class PostgresRecipeDAO implements DAO<Recipe> {
 
     private static final String RECIPE_SELECT_ID = "select * from recipe where id = ?";
     private static final String RECIPE_INGREDIENTS_SELECT_FROM_RECIPE_ID = "select name, unit, amount from recipe_ingredients where recipe_id = ?";
@@ -41,14 +36,14 @@ public class PostgresRecipeItemDOStorageServiceImpl implements ItemStorageServic
     private static final String SELECT_ALL_RECIPE_INSTRUCTIONS = "select step_number, instruction from recipe_instructions where recipe_id = ?";
     private static final String SELECT_ALL_RECIPE_INGREDIENTS = "select name, amount, unit from recipe_ingredients where recipe_id = ?";
 
-    private static final Logger log = LoggerFactory.getLogger(PostgresRecipeItemDOStorageServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(PostgresRecipeDAO.class);
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Override
     @Transactional
-    public int store(RecipeItem itemDO) {
+    public int store(Recipe itemDO) {
         try {
             Integer recipeId = jdbcTemplate.queryForObject(INSERT_RECIPE_ITEM_FOR_ID, Integer.class, itemDO.getTitle(), itemDO.getAuthor(), itemDO.getCreatedDatetime(), itemDO.isVegetarian(), itemDO.getFeeds());
             jdbcTemplate.batchUpdate(INSERT_RECIPE_INSTRUCTION_ID_FOR_RECIPE_ID, new InstructionsPreparedStatementSetter(itemDO.getInstructions(), recipeId));
@@ -60,11 +55,11 @@ public class PostgresRecipeItemDOStorageServiceImpl implements ItemStorageServic
     }
 
     @Override
-    public RecipeItem get(int id) {
+    public Recipe get(int id) {
         try {
-            RecipeItem item = jdbcTemplate.queryForObject(RECIPE_SELECT_ID, BeanPropertyRowMapper.newInstance(RecipeItem.class), id);
-            List<IngredientItem> recipeIngredients = jdbcTemplate.query(RECIPE_INGREDIENTS_SELECT_FROM_RECIPE_ID, new BeanPropertyRowMapper<>(IngredientItem.class), id);
-            List<CookingStep> cookingSteps = jdbcTemplate.query(RECIPE_INSTRUCTIONS_SELECT_FROM_RECIPE_ID, new BeanPropertyRowMapper<>(CookingStep.class), id);
+            Recipe item = jdbcTemplate.queryForObject(RECIPE_SELECT_ID, BeanPropertyRowMapper.newInstance(Recipe.class), id);
+            List<Ingredient> recipeIngredients = jdbcTemplate.query(RECIPE_INGREDIENTS_SELECT_FROM_RECIPE_ID, new BeanPropertyRowMapper<>(Ingredient.class), id);
+            List<Instruction> cookingSteps = jdbcTemplate.query(RECIPE_INSTRUCTIONS_SELECT_FROM_RECIPE_ID, new BeanPropertyRowMapper<>(Instruction.class), id);
             item.setInstructions(cookingSteps);
             item.setIngredients(recipeIngredients);
             return item;
@@ -77,7 +72,7 @@ public class PostgresRecipeItemDOStorageServiceImpl implements ItemStorageServic
 
     @Override
     @Transactional
-    public void update(RecipeItem itemDO) {
+    public void update(Recipe itemDO) {
         try {
             jdbcTemplate.update(UPDATE_RECIPE, itemDO.getTitle(), itemDO.getAuthor(), itemDO.getCreatedDatetime(), itemDO.isVegetarian(), itemDO.getFeeds(), itemDO.getId());
             jdbcTemplate.update(DELETE_RECIPE_AND_INSTRUCTIONS_DEPENDENCIES_BY_ID, itemDO.getId(), itemDO.getId());
@@ -100,12 +95,12 @@ public class PostgresRecipeItemDOStorageServiceImpl implements ItemStorageServic
     }
 
     @Override
-    public List<RecipeItem> listAll() {
+    public List<Recipe> listAll() {
         try {
-            List<RecipeItem> recipeItems = jdbcTemplate.query(SELECT_ALL_RECIPES, BeanPropertyRowMapper.newInstance(RecipeItem.class));
-            for (RecipeItem item : recipeItems) {
-                item.setInstructions(jdbcTemplate.query(SELECT_ALL_RECIPE_INSTRUCTIONS, BeanPropertyRowMapper.newInstance(CookingStep.class), item.getId()));
-                item.setIngredients(jdbcTemplate.query(SELECT_ALL_RECIPE_INGREDIENTS, BeanPropertyRowMapper.newInstance(IngredientItem.class), item.getId()));
+            List<Recipe> recipeItems = jdbcTemplate.query(SELECT_ALL_RECIPES, BeanPropertyRowMapper.newInstance(Recipe.class));
+            for (Recipe item : recipeItems) {
+                item.setInstructions(jdbcTemplate.query(SELECT_ALL_RECIPE_INSTRUCTIONS, BeanPropertyRowMapper.newInstance(Instruction.class), item.getId()));
+                item.setIngredients(jdbcTemplate.query(SELECT_ALL_RECIPE_INGREDIENTS, BeanPropertyRowMapper.newInstance(Ingredient.class), item.getId()));
             }
             return recipeItems;
         } catch (DataAccessException dax) {

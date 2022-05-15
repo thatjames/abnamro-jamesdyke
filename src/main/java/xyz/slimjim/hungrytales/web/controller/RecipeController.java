@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import xyz.slimjim.hungrytales.common.exceptions.HungryTalesException;
 import xyz.slimjim.hungrytales.common.exceptions.RecordNotFoundException;
-import xyz.slimjim.hungrytales.common.item.RecipeItem;
+import xyz.slimjim.hungrytales.common.recipe.Recipe;
 import xyz.slimjim.hungrytales.service.api.RecipeService;
 import xyz.slimjim.hungrytales.web.converter.RecipeItemDTOConverter;
 import xyz.slimjim.hungrytales.web.dto.RecipeCreateResultDTO;
@@ -38,7 +38,7 @@ public class RecipeController {
         log.info(String.format("Fetch recipe %d", id));
         try {
             RecipeItemDTOConverter converter = new RecipeItemDTOConverter();
-            RecipeItem item = recipeService.getRecipe(id);
+            Recipe item = recipeService.getRecipe(id);
             item.setId(id);
             dtoResponse.setResult(true);
             dtoResponse.setData(converter.fromItemToDTO(item));

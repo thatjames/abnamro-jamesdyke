@@ -1,6 +1,6 @@
-package xyz.slimjim.hungrytales.common.item;
+package xyz.slimjim.hungrytales.common.recipe;
 
-import xyz.slimjim.hungrytales.common.cooking.CookingStep;
+import xyz.slimjim.hungrytales.common.dataobject.DataObject;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class RecipeItem extends Item {
+public class Recipe extends DataObject {
 
     private int id;
     private String author;
@@ -18,10 +18,10 @@ public class RecipeItem extends Item {
     private LocalDateTime createdDatetime;
     private boolean isVegetarian;
     private int feeds;
-    private List<IngredientItem> ingredients;
-    private List<CookingStep> instructions;
+    private List<Ingredient> ingredients;
+    private List<Instruction> instructions;
 
-    public RecipeItem() {
+    public Recipe() {
         ingredients = new ArrayList<>();
         instructions = new ArrayList<>();
     }
@@ -82,20 +82,20 @@ public class RecipeItem extends Item {
         this.feeds = feeds;
     }
 
-    public List<IngredientItem> getIngredients() {
+    public List<Ingredient> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(List<IngredientItem> ingredients) {
+    public void setIngredients(List<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public List<CookingStep> getInstructions() {
+    public List<Instruction> getInstructions() {
         Collections.sort(instructions);
         return instructions;
     }
 
-    public void setInstructions(List<CookingStep> instructions) {
+    public void setInstructions(List<Instruction> instructions) {
         this.instructions = instructions;
     }
 

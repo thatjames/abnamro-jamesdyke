@@ -1,6 +1,6 @@
-package xyz.slimjim.hungrytales.web.dto;
+package xyz.slimjim.hungrytales.common.recipe;
 
-public class CookingStepDTO extends BaseDTO {
+public class Instruction implements Comparable<Instruction>{
 
     private int stepNumber;
     private String instruction;
@@ -22,8 +22,19 @@ public class CookingStepDTO extends BaseDTO {
     }
 
     @Override
+    public int compareTo(Instruction other) {
+        if (other.stepNumber > this.stepNumber) {
+            return -1;
+        } else if (other.stepNumber < this.stepNumber) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
     public String toString() {
-        return "CookingStepDTO{" +
+        return "CookingStep{" +
                 "stepNumber=" + stepNumber +
                 ", instruction='" + instruction + '\'' +
                 '}';

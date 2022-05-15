@@ -1,7 +1,5 @@
 package xyz.slimjim.hungrytales.web.dto;
 
-import xyz.slimjim.hungrytales.common.cooking.CookingStep;
-
 import java.util.List;
 
 public class RecipeDTO extends BaseDTO {
@@ -13,7 +11,7 @@ public class RecipeDTO extends BaseDTO {
     private boolean isVegetarian;
     private int feeds;
     private List<IngredientDTO> ingredients;
-    private List<CookingStepDTO> instructions;
+    private List<InstructionDTO> instructions;
 
     public int getId() {
         return id;
@@ -71,11 +69,11 @@ public class RecipeDTO extends BaseDTO {
         this.ingredients = ingredients;
     }
 
-    public List<CookingStepDTO> getInstructions() {
+    public List<InstructionDTO> getInstructions() {
         return instructions;
     }
 
-    public void setInstructions(List<CookingStepDTO> instructions) {
+    public void setInstructions(List<InstructionDTO> instructions) {
         this.instructions = instructions;
     }
 

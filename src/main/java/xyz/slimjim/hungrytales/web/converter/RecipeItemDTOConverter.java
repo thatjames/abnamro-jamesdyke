@@ -1,9 +1,9 @@
 package xyz.slimjim.hungrytales.web.converter;
 
-import xyz.slimjim.hungrytales.common.cooking.CookingStep;
-import xyz.slimjim.hungrytales.common.item.IngredientItem;
-import xyz.slimjim.hungrytales.common.item.RecipeItem;
-import xyz.slimjim.hungrytales.web.dto.CookingStepDTO;
+import xyz.slimjim.hungrytales.common.recipe.Instruction;
+import xyz.slimjim.hungrytales.common.recipe.Ingredient;
+import xyz.slimjim.hungrytales.common.recipe.Recipe;
+import xyz.slimjim.hungrytales.web.dto.InstructionDTO;
 import xyz.slimjim.hungrytales.web.dto.IngredientDTO;
 import xyz.slimjim.hungrytales.web.dto.RecipeDTO;
 
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
-public class RecipeItemDTOConverter implements ItemDTOConverter<RecipeItem, RecipeDTO> {
+public class RecipeItemDTOConverter implements DataObjectDTOConverter<Recipe, RecipeDTO> {
 
     private DateTimeFormatter formatter;
 
@@ -19,7 +19,7 @@ public class RecipeItemDTOConverter implements ItemDTOConverter<RecipeItem, Reci
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     }
 
-    public RecipeDTO fromItemToDTO(RecipeItem item) {
+    public RecipeDTO fromItemToDTO(Recipe item) {
         RecipeDTO dto = new RecipeDTO();
         dto.setId(item.getId());
         dto.setAuthor(item.getAuthor());
@@ -36,7 +36,7 @@ public class RecipeItemDTOConverter implements ItemDTOConverter<RecipeItem, Reci
                 })
                 .collect(Collectors.toList()));
         dto.setInstructions(item.getInstructions().stream().map(instructionItem -> {
-                    CookingStepDTO instructionDto = new CookingStepDTO();
+                    InstructionDTO instructionDto = new InstructionDTO();
                     instructionDto.setInstruction(instructionItem.getInstruction());
                     instructionDto.setStepNumber(instructionItem.getStepNumber());
                     return instructionDto;
@@ -46,8 +46,8 @@ public class RecipeItemDTOConverter implements ItemDTOConverter<RecipeItem, Reci
     }
 
     @Override
-    public RecipeItem fromDTOToItem(RecipeDTO dto) {
-        RecipeItem item = new RecipeItem();
+    public Recipe fromDTOToItem(RecipeDTO dto) {
+        Recipe item = new Recipe();
         item.setId(dto.getId());
         item.setAuthor(dto.getAuthor());
         item.setCreatedDatetime(LocalDateTime.parse(dto.getCreatedDatetime(), formatter));
@@ -55,7 +55,7 @@ public class RecipeItemDTOConverter implements ItemDTOConverter<RecipeItem, Reci
         item.setTitle(dto.getTitle());
         item.setVegetarian(dto.isVegetarian());
         item.setIngredients(dto.getIngredients().stream().map(ingredientDTO -> {
-                    IngredientItem ingredientItem = new IngredientItem();
+                    Ingredient ingredientItem = new Ingredient();
                     ingredientItem.setName(ingredientDTO.getName());
                     ingredientItem.setAmount(ingredientDTO.getAmount());
                     ingredientItem.setUnit(ingredientDTO.getUnit());
@@ -63,7 +63,7 @@ public class RecipeItemDTOConverter implements ItemDTOConverter<RecipeItem, Reci
                 })
                 .collect(Collectors.toList()));
         item.setInstructions(dto.getInstructions().stream().map(instructionDTO -> {
-                    CookingStep instructionItem = new CookingStep();
+                    Instruction instructionItem = new Instruction();
                     instructionItem.setInstruction(instructionDTO.getInstruction());
                     instructionItem.setStepNumber(instructionDTO.getStepNumber());
                     return instructionItem;

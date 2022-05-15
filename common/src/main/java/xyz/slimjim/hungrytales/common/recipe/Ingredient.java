@@ -1,6 +1,8 @@
-package xyz.slimjim.hungrytales.common.item;
+package xyz.slimjim.hungrytales.common.recipe;
 
-public class IngredientItem extends Item {
+import xyz.slimjim.hungrytales.common.dataobject.DataObject;
+
+public class Ingredient extends DataObject {
 
     private int id;
     private String name;
