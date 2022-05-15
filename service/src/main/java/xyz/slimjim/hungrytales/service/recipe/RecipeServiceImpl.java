@@ -21,12 +21,12 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public void updateRecipe(RecipeItem updateRecipeRequest) {
-
+        itemStorageService.update(updateRecipeRequest);
     }
 
     @Override
     public void deleteRecipe(int recipeId) {
-
+        itemStorageService.delete(recipeId);
     }
 
     @Override

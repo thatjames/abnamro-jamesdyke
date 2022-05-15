@@ -12,6 +12,7 @@ import java.util.List;
 
 public class RecipeItem extends Item {
 
+    private int id;
     private String author;
     private String title;
     private LocalDateTime createdDatetime;
@@ -23,6 +24,14 @@ public class RecipeItem extends Item {
     public RecipeItem() {
         ingredients = new ArrayList<>();
         instructions = new ArrayList<>();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getAuthor() {

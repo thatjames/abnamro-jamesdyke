@@ -6,6 +6,7 @@ import java.util.List;
 
 public class RecipeDTO extends BaseDTO {
 
+    private int id;
     private String author;
     private String title;
     private String createdDatetime;
@@ -13,6 +14,14 @@ public class RecipeDTO extends BaseDTO {
     private int feeds;
     private List<IngredientDTO> ingredients;
     private List<CookingStepDTO> instructions;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getAuthor() {
         return author;
@@ -72,10 +81,11 @@ public class RecipeDTO extends BaseDTO {
 
     @Override
     public String toString() {
-        return "RecipeItemDTO{" +
-                "author='" + author + '\'' +
+        return "RecipeDTO{" +
+                "id=" + id +
+                ", author='" + author + '\'' +
                 ", title='" + title + '\'' +
-                ", createdDatetime=" + createdDatetime +
+                ", createdDatetime='" + createdDatetime + '\'' +
                 ", isVegetarian=" + isVegetarian +
                 ", feeds=" + feeds +
                 ", ingredients=" + ingredients +

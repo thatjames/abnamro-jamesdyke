@@ -21,6 +21,7 @@ public class RecipeItemDTOConverter implements ItemDTOConverter<RecipeItem, Reci
 
     public RecipeDTO fromItemToDTO(RecipeItem item) {
         RecipeDTO dto = new RecipeDTO();
+        dto.setId(item.getId());
         dto.setAuthor(item.getAuthor());
         dto.setCreatedDatetime(item.getCreatedDatetime().format(formatter));
         dto.setFeeds(item.getFeeds());
@@ -47,6 +48,7 @@ public class RecipeItemDTOConverter implements ItemDTOConverter<RecipeItem, Reci
     @Override
     public RecipeItem fromDTOToItem(RecipeDTO dto) {
         RecipeItem item = new RecipeItem();
+        item.setId(dto.getId());
         item.setAuthor(dto.getAuthor());
         item.setCreatedDatetime(LocalDateTime.parse(dto.getCreatedDatetime(), formatter));
         item.setFeeds(dto.getFeeds());

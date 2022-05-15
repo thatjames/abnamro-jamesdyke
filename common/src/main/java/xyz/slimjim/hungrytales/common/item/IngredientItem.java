@@ -2,6 +2,7 @@ package xyz.slimjim.hungrytales.common.item;
 
 public class IngredientItem extends Item {
 
+    private int id;
     private String name;
     private int amount;
     private String unit;

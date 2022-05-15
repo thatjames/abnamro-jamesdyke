@@ -57,8 +57,8 @@ public class RecipeController {
     @PutMapping("/update")
     public WebResponse<Void> updateRecipe(@RequestBody RecipeDTO request, HttpServletResponse response) {
         WebResponse<Void> dtoResponse = new WebResponse<>();
-        if (request == null) {
-            dtoResponse.setErrorMessage("bad request id");
+        if (request == null || request.getId() < 1) {
+            dtoResponse.setErrorMessage("bad request");
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return dtoResponse;
         }
