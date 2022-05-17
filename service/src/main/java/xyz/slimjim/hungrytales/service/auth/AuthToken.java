@@ -1,5 +1,6 @@
 package xyz.slimjim.hungrytales.service.auth;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import xyz.slimjim.hungrytales.common.auth.User;
 
 import java.time.LocalDateTime;
@@ -9,6 +10,9 @@ public class AuthToken {
 
     private User user;
     private LocalDateTime validUntil;
+
+    public AuthToken() {
+    }
 
     public AuthToken(User user) {
         this.user = user;
@@ -31,6 +35,7 @@ public class AuthToken {
         this.validUntil = validUntil;
     }
 
+    @JsonIgnore
     public boolean isTTLValid() {
         return validUntil.isAfter(LocalDateTime.now());
     }

@@ -1,5 +1,6 @@
 package xyz.slimjim.hungrytales.service.auth;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -89,7 +90,7 @@ public class AuthServiceImpl implements AuthService {
             engine.init(false, KEY_PAIR.getPrivate());
             AuthToken authToken = new ObjectMapper().registerModule(new JavaTimeModule()).readValue(engine.processBlock(claim, 0, claim.length), AuthToken.class);
             return authToken.isTTLValid();
-        } catch (InvalidCipherTextException ex) {
+        } catch (InvalidCipherTextException | JsonParseException ex) {
             log.error("invalid cipher text provided", ex);
             return false;
         } catch (IOException ex) {

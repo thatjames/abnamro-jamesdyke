@@ -25,11 +25,17 @@ public class TokenFilter implements Filter {
         }
 
         String claim = httpServletRequest.getHeader("Authorization");
-        if (!claim.contains(" ")) {
+        if (claim == null || !claim.contains(" ")) {
             httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
         String authToken = claim.split(" ")[1];
+        if (!authService.validateToken(authToken)) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 }
