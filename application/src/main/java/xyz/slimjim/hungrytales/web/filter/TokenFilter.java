@@ -44,7 +44,6 @@ public class TokenFilter implements Filter {
             filterChain.doFilter(servletRequest, servletResponse);
         } catch (AuthException ax) {
             ((HttpServletResponse) servletResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
         }
     }
 }
