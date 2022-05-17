@@ -6,17 +6,14 @@ import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.prng.DigestRandomGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import xyz.slimjim.hungrytales.common.auth.LoginRequest;
 import xyz.slimjim.hungrytales.common.auth.RegisterRequest;
 import xyz.slimjim.hungrytales.common.auth.User;
-import xyz.slimjim.hungrytales.common.exceptions.HungryTalesException;
 import xyz.slimjim.hungrytales.service.api.AuthService;
 import xyz.slimjim.hungrytales.storage.service.AuthDAO;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.Base64;
-
+@Component
 public class AuthServiceImpl implements AuthService {
 
     private static final int ITERATIONS = 2000;
@@ -31,7 +28,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void register(RegisterRequest registerRequest) {
-        registerRequest.setSalt(salt(SALT_SIZE));
+        registerRequest.setSalt(salt());
         registerRequest.setPassword(encryptPassword(registerRequest.getChallenge(), registerRequest.getSalt()));
         authDAO.register(registerRequest);
     }
@@ -46,8 +43,8 @@ public class AuthServiceImpl implements AuthService {
         return ((KeyParameter) PARAMS_GENERATOR.generateDerivedParameters(KEY_SIZE)).getKey();
     }
 
-    private byte[] salt(int size) {
-        byte[] salt = new byte[size];
+    private byte[] salt() {
+        byte[] salt = new byte[AuthServiceImpl.SALT_SIZE];
         RANDOM_GENERATOR.nextBytes(salt);
         return salt;
     }

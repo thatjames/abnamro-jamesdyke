@@ -1,14 +1,11 @@
 package xyz.slimjim.hungrytales.web.dto;
 
-import java.time.LocalDateTime;
-
 public class RegisterRequestDTO extends BaseDTO {
 
     private String username;
     private String password;
     private String name;
     private String surname;
-    private LocalDateTime createdAt;
 
     public String getUsername() {
         return username;
@@ -42,11 +39,4 @@ public class RegisterRequestDTO extends BaseDTO {
         this.surname = surname;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }
