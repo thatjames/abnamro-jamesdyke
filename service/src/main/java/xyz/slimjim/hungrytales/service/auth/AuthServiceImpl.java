@@ -1,23 +1,44 @@
 package xyz.slimjim.hungrytales.service.auth;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.bouncycastle.crypto.AsymmetricBlockCipher;
+import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.PBEParametersGenerator;
 import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.engines.RSAEngine;
 import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
+import org.bouncycastle.crypto.generators.RSAKeyPairGenerator;
 import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.crypto.params.RSAKeyGenerationParameters;
 import org.bouncycastle.crypto.prng.DigestRandomGenerator;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import xyz.slimjim.hungrytales.common.auth.LoginRequest;
 import xyz.slimjim.hungrytales.common.auth.RegisterRequest;
 import xyz.slimjim.hungrytales.common.auth.User;
+import xyz.slimjim.hungrytales.common.exceptions.HungryTalesException;
 import xyz.slimjim.hungrytales.common.exceptions.LoginFailedException;
 import xyz.slimjim.hungrytales.service.api.AuthService;
 import xyz.slimjim.hungrytales.storage.service.AuthDAO;
 
+import java.io.IOException;
+import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.Security;
 import java.util.Arrays;
+import java.util.Base64;
 
 @Component
 public class AuthServiceImpl implements AuthService {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
 
     private static final int ITERATIONS = 2000;
     private static final int SALT_SIZE = 512;
@@ -25,6 +46,19 @@ public class AuthServiceImpl implements AuthService {
 
     private static final DigestRandomGenerator RANDOM_GENERATOR = new DigestRandomGenerator(new SHA256Digest());
     private static final PKCS5S2ParametersGenerator PARAMS_GENERATOR = new PKCS5S2ParametersGenerator();
+    private static final AsymmetricCipherKeyPair KEY_PAIR;
+
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+        try {
+            RSAKeyPairGenerator generator = new RSAKeyPairGenerator();
+            generator.init(new RSAKeyGenerationParameters(new BigInteger("1001", 16), SecureRandom.getInstance("SHA1PRNG"), 2048, 80));
+            log.info("Creating keypair, this can take a while");
+            KEY_PAIR = generator.generateKeyPair();
+        } catch (NoSuchAlgorithmException ex) {
+            throw new HungryTalesException("Unable to create key pair generator", ex);
+        }
+    }
 
     @Autowired
     private AuthDAO authDAO;
@@ -39,12 +73,41 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public User login(LoginRequest loginRequest) {
         User user = authDAO.getUser(loginRequest);
-        if (!verify(loginRequest.getChallenge(), user.getSalt(), user.getPassword())) {
+        if (!validatePassword(loginRequest.getChallenge(), user.getSalt(), user.getPassword())) {
             throw new LoginFailedException("username/password was incorrect");
         }
         user.setPassword(null);
         user.setSalt(null);
         return user;
+    }
+
+    @Override
+    public boolean validateToken(String token) {
+        try {
+            byte[] claim = Base64.getDecoder().decode(token);
+            AsymmetricBlockCipher engine = new RSAEngine();
+            engine.init(false, KEY_PAIR.getPrivate());
+            AuthToken authToken = new ObjectMapper().registerModule(new JavaTimeModule()).readValue(engine.processBlock(claim, 0, claim.length), AuthToken.class);
+            return authToken.isTTLValid();
+        } catch (InvalidCipherTextException ex) {
+            log.error("invalid cipher text provided", ex);
+            return false;
+        } catch (IOException ex) {
+            throw new HungryTalesException("unable to read token", ex);
+        }
+    }
+
+    @Override
+    public String createToken(User user) {
+        try {
+            byte[] jsonData = new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsBytes(new AuthToken(user));
+            log.info("create token for " + new String(jsonData));
+            AsymmetricBlockCipher engine = new RSAEngine();
+            engine.init(true, KEY_PAIR.getPublic());
+            return Base64.getEncoder().encodeToString(engine.processBlock(jsonData, 0, jsonData.length));
+        } catch (JsonProcessingException | InvalidCipherTextException ex) {
+            throw new HungryTalesException("Unable to create secure token", ex);
+        }
     }
 
     private byte[] encryptPassword(String plainText, byte[] salt) {
@@ -58,7 +121,7 @@ public class AuthServiceImpl implements AuthService {
         return salt;
     }
 
-    private boolean verify(String plainPassword, byte[] salt, byte[] hash) {
+    private boolean validatePassword(String plainPassword, byte[] salt, byte[] hash) {
         return Arrays.equals(encryptPassword(plainPassword, salt), hash);
     }
 

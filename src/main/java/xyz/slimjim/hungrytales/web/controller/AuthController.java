@@ -51,6 +51,7 @@ public class AuthController {
             UserItemDTOConverter userConverter = new UserItemDTOConverter();
             LoginResponseDTO responseDTO = new LoginResponseDTO();
             responseDTO.setUserDTO(userConverter.fromItemToDTO(user));
+            responseDTO.setAuthToken(authService.createToken(user));
             dtoResponse.setData(responseDTO);
             dtoResponse.setResult(true);
         } catch (Exception ex) {

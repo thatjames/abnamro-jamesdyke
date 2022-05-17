@@ -11,4 +11,8 @@ public interface AuthService {
     void register(RegisterRequest registerRequest);
 
     User login(LoginRequest loginRequest);
+
+    boolean validateToken(String token);
+
+    String createToken(User user);
 }
