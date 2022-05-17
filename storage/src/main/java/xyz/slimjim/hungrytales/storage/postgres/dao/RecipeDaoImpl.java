@@ -1,4 +1,4 @@
-package xyz.slimjim.hungrytales.storage.postgres;
+package xyz.slimjim.hungrytales.storage.postgres.dao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ import xyz.slimjim.hungrytales.storage.service.DataObjectDAO;
 import java.util.List;
 
 @Repository
-public class PostgresRecipeDAO implements DataObjectDAO<Recipe> {
+public class RecipeDaoImpl implements DataObjectDAO<Recipe> {
 
     private static final String RECIPE_SELECT_ID = "select * from recipe where id = ?";
     private static final String RECIPE_INGREDIENTS_SELECT_FROM_RECIPE_ID = "select name, unit, amount from recipe_ingredients where recipe_id = ?";
@@ -36,7 +36,7 @@ public class PostgresRecipeDAO implements DataObjectDAO<Recipe> {
     private static final String SELECT_ALL_RECIPE_INSTRUCTIONS = "select step_number, instruction from recipe_instructions where recipe_id = ?";
     private static final String SELECT_ALL_RECIPE_INGREDIENTS = "select name, amount, unit from recipe_ingredients where recipe_id = ?";
 
-    private static final Logger log = LoggerFactory.getLogger(PostgresRecipeDAO.class);
+    private static final Logger log = LoggerFactory.getLogger(RecipeDaoImpl.class);
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
