@@ -7,9 +7,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import xyz.slimjim.hungrytales.common.auth.User;
 import xyz.slimjim.hungrytales.service.api.AuthService;
+import xyz.slimjim.hungrytales.web.converter.LoginRequestDTOConverter;
 import xyz.slimjim.hungrytales.web.converter.RegisterRequestDTOConverter;
+import xyz.slimjim.hungrytales.web.converter.UserItemDTOConverter;
 import xyz.slimjim.hungrytales.web.dto.AuthResponseDTO;
+import xyz.slimjim.hungrytales.web.dto.LoginRequestDTO;
+import xyz.slimjim.hungrytales.web.dto.LoginResponseDTO;
 import xyz.slimjim.hungrytales.web.dto.RegisterRequestDTO;
 import xyz.slimjim.hungrytales.web.response.WebResponse;
 
@@ -25,8 +30,8 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/register")
-    public WebResponse<AuthResponseDTO> register(@RequestBody RegisterRequestDTO registerRequest, HttpServletResponse response) {
-        WebResponse<AuthResponseDTO> dtoResponse = new WebResponse<>();
+    public WebResponse<Void> register(@RequestBody RegisterRequestDTO registerRequest, HttpServletResponse response) {
+        WebResponse<Void> dtoResponse = new WebResponse<>();
         log.info(String.format("Register user %s", registerRequest.getUsername()));
         try {
             RegisterRequestDTOConverter converter = new RegisterRequestDTOConverter();
@@ -40,4 +45,23 @@ public class AuthController {
         return dtoResponse;
     }
 
+    @PostMapping("/login")
+    public WebResponse<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequest, HttpServletResponse response) {
+        WebResponse<LoginResponseDTO> dtoResponse = new WebResponse<>();
+        log.info(String.format("login attempt for %s", loginRequest.getUsername()));
+        try {
+            LoginRequestDTOConverter converter = new LoginRequestDTOConverter();
+            User user = authService.login(converter.fromDTOToItem(loginRequest));
+            UserItemDTOConverter userConverter = new UserItemDTOConverter();
+            LoginResponseDTO responseDTO = new LoginResponseDTO();
+            responseDTO.setUserDTO(userConverter.fromItemToDTO(user));
+            dtoResponse.setData(responseDTO);
+            dtoResponse.setResult(true);
+        } catch (Exception ex) {
+            log.error("Unable to process login", ex);
+            dtoResponse.setErrorMessage(ex.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+        return dtoResponse;
+    }
 }

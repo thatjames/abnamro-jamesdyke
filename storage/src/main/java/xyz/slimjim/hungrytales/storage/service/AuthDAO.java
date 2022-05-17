@@ -8,5 +8,5 @@ public interface AuthDAO {
 
     void register(RegisterRequest registerRequest);
 
-    User login(LoginRequest loginRequest);
+    User getUser(LoginRequest loginRequest);
 }

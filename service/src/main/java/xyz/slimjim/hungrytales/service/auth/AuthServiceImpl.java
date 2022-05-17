@@ -10,8 +10,11 @@ import org.springframework.stereotype.Component;
 import xyz.slimjim.hungrytales.common.auth.LoginRequest;
 import xyz.slimjim.hungrytales.common.auth.RegisterRequest;
 import xyz.slimjim.hungrytales.common.auth.User;
+import xyz.slimjim.hungrytales.common.exceptions.LoginFailedException;
 import xyz.slimjim.hungrytales.service.api.AuthService;
 import xyz.slimjim.hungrytales.storage.service.AuthDAO;
+
+import java.util.Arrays;
 
 @Component
 public class AuthServiceImpl implements AuthService {
@@ -35,7 +38,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public User login(LoginRequest loginRequest) {
-        return authDAO.login(loginRequest);
+        User user = authDAO.getUser(loginRequest);
+        if (!verify(loginRequest.getChallenge(), user.getSalt(), user.getPassword())) {
+            throw new LoginFailedException("username/password was incorrect");
+        }
+        user.setPassword(null);
+        user.setSalt(null);
+        return user;
     }
 
     private byte[] encryptPassword(String plainText, byte[] salt) {
@@ -47,6 +56,10 @@ public class AuthServiceImpl implements AuthService {
         byte[] salt = new byte[AuthServiceImpl.SALT_SIZE];
         RANDOM_GENERATOR.nextBytes(salt);
         return salt;
+    }
+
+    private boolean verify(String plainPassword, byte[] salt, byte[] hash) {
+        return Arrays.equals(encryptPassword(plainPassword, salt), hash);
     }
 
 }

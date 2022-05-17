@@ -8,6 +8,8 @@ public class User extends DataObject {
     private String username;
     private String name;
     private String surname;
+    private byte[] salt;
+    private byte[] password;
 
     public int getId() {
         return id;
@@ -39,5 +41,21 @@ public class User extends DataObject {
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    public byte[] getSalt() {
+        return salt;
+    }
+
+    public void setSalt(byte[] salt) {
+        this.salt = salt;
+    }
+
+    public byte[] getPassword() {
+        return password;
+    }
+
+    public void setPassword(byte[] password) {
+        this.password = password;
     }
 }
