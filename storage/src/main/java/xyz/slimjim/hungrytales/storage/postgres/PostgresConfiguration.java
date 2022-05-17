@@ -15,9 +15,9 @@ public class PostgresConfiguration {
     public DataSource postgresDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUsername("htalesjdbc");
-        dataSource.setPassword("Pjv2QkQxHGbvxD");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/hungrytales");
+        dataSource.setUsername(System.getProperty("jdbc.username"));
+        dataSource.setPassword(System.getProperty("jdbc.password"));
+        dataSource.setUrl(System.getProperty("jdbc.url"));
         return dataSource;
     }
 }
