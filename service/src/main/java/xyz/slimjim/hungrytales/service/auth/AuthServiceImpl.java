@@ -1,6 +1,5 @@
 package xyz.slimjim.hungrytales.service.auth;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Component;
 import xyz.slimjim.hungrytales.common.auth.LoginRequest;
 import xyz.slimjim.hungrytales.common.auth.RegisterRequest;
 import xyz.slimjim.hungrytales.common.auth.User;
+import xyz.slimjim.hungrytales.common.exceptions.AuthException;
 import xyz.slimjim.hungrytales.common.exceptions.HungryTalesException;
 import xyz.slimjim.hungrytales.common.exceptions.LoginFailedException;
 import xyz.slimjim.hungrytales.service.api.AuthService;
@@ -35,6 +35,11 @@ import java.security.SecureRandom;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Component
 public class AuthServiceImpl implements AuthService {
@@ -49,6 +54,9 @@ public class AuthServiceImpl implements AuthService {
     private static final PKCS5S2ParametersGenerator PARAMS_GENERATOR = new PKCS5S2ParametersGenerator();
     private static final AsymmetricCipherKeyPair KEY_PAIR;
 
+    private Queue<String> burnedTokens;
+    private ReadWriteLock tokenBlacklistLock;
+
     static {
         Security.addProvider(new BouncyCastleProvider());
         try {
@@ -59,6 +67,11 @@ public class AuthServiceImpl implements AuthService {
         } catch (NoSuchAlgorithmException ex) {
             throw new HungryTalesException("Unable to create key pair generator", ex);
         }
+    }
+
+    public AuthServiceImpl() {
+        burnedTokens = new ConcurrentLinkedQueue<>();
+        tokenBlacklistLock = new ReentrantReadWriteLock();
     }
 
     @Autowired
@@ -84,17 +97,26 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean validateToken(String token) {
+        AuthToken authToken = parseToken(token);
+        return authToken.isTTLValid();
+    }
+
+    @Override
+    public AuthToken parseToken(String token) {
+        Lock lock = tokenBlacklistLock.readLock();
+        lock.lock();
+        if (burnedTokens.contains(token)) {
+            lock.unlock();
+            throw new AuthException("burned token");
+        }
+        lock.unlock();
         try {
             byte[] claim = Base64.getDecoder().decode(token);
             AsymmetricBlockCipher engine = new RSAEngine();
             engine.init(false, KEY_PAIR.getPrivate());
-            AuthToken authToken = new ObjectMapper().registerModule(new JavaTimeModule()).readValue(engine.processBlock(claim, 0, claim.length), AuthToken.class);
-            return authToken.isTTLValid();
-        } catch (InvalidCipherTextException | JsonParseException ex) {
-            log.error("invalid cipher text provided", ex);
-            return false;
-        } catch (IOException ex) {
-            throw new HungryTalesException("unable to read token", ex);
+            return new ObjectMapper().registerModule(new JavaTimeModule()).readValue(engine.processBlock(claim, 0, claim.length), AuthToken.class);
+        } catch (IOException | InvalidCipherTextException ex) {
+            throw new AuthException("access denied");
         }
     }
 
@@ -102,12 +124,22 @@ public class AuthServiceImpl implements AuthService {
     public String createToken(User user) {
         try {
             byte[] jsonData = new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsBytes(new AuthToken(user));
-            log.info("create token for " + new String(jsonData));
             AsymmetricBlockCipher engine = new RSAEngine();
             engine.init(true, KEY_PAIR.getPublic());
             return Base64.getEncoder().encodeToString(engine.processBlock(jsonData, 0, jsonData.length));
         } catch (JsonProcessingException | InvalidCipherTextException ex) {
             throw new HungryTalesException("Unable to create secure token", ex);
+        }
+    }
+
+    @Override
+    public String refreshToken(String token) {
+        try {
+            AuthToken authToken = parseToken(token);
+            burnToken(token);
+            return createToken(authToken.getUser());
+        } catch (Exception ex) {
+            throw new HungryTalesException("Unable to refresh token", ex);
         }
     }
 
@@ -126,4 +158,13 @@ public class AuthServiceImpl implements AuthService {
         return Arrays.equals(encryptPassword(plainPassword, salt), hash);
     }
 
+    private void burnToken(String burnedToken) {
+        Lock lock = tokenBlacklistLock.writeLock();
+        lock.lock();
+        burnedTokens.add(burnedToken);
+        if (burnedTokens.size() > 100) {
+            burnedTokens.remove();
+        }
+        lock.unlock();
+    }
 }

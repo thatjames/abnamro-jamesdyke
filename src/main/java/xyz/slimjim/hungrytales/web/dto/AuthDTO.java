@@ -1,7 +1,10 @@
 package xyz.slimjim.hungrytales.web.dto;
 
-public class LoginResponseDTO extends BaseDTO {
+import com.fasterxml.jackson.annotation.JsonInclude;
 
+public class AuthDTO extends BaseDTO {
+
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private UserDTO userDTO;
     private String authToken;
 
