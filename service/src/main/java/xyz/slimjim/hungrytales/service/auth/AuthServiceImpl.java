@@ -37,9 +37,6 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Component
 public class AuthServiceImpl implements AuthService {
@@ -55,7 +52,6 @@ public class AuthServiceImpl implements AuthService {
     private static final AsymmetricCipherKeyPair KEY_PAIR;
 
     private Queue<String> burnedTokens;
-    private ReadWriteLock tokenBlacklistLock;
 
     static {
         Security.addProvider(new BouncyCastleProvider());
@@ -71,7 +67,6 @@ public class AuthServiceImpl implements AuthService {
 
     public AuthServiceImpl() {
         burnedTokens = new ConcurrentLinkedQueue<>();
-        tokenBlacklistLock = new ReentrantReadWriteLock();
     }
 
     @Autowired
@@ -103,13 +98,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthToken parseToken(String token) {
-        Lock lock = tokenBlacklistLock.readLock();
-        lock.lock();
         if (burnedTokens.contains(token)) {
-            lock.unlock();
             throw new AuthException("burned token");
         }
-        lock.unlock();
         try {
             byte[] claim = Base64.getDecoder().decode(token);
             AsymmetricBlockCipher engine = new RSAEngine();
@@ -159,12 +150,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private void burnToken(String burnedToken) {
-        Lock lock = tokenBlacklistLock.writeLock();
-        lock.lock();
         burnedTokens.add(burnedToken);
         if (burnedTokens.size() > 100) {
             burnedTokens.remove();
         }
-        lock.unlock();
     }
 }

@@ -64,7 +64,7 @@ public class RecipeDaoImpl implements DataObjectDAO<Recipe> {
             item.setIngredients(recipeIngredients);
             return item;
         } catch (EmptyResultDataAccessException ex) {
-            throw new RecordNotFoundException(ex.getMessage(), ex);
+            throw new RecordNotFoundException("no recipe found");
         } catch (DataAccessException dax) {
             throw new HungryTalesException("Postgres error occurred", dax);
         }

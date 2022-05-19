@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import xyz.slimjim.hungrytales.common.auth.User;
+import xyz.slimjim.hungrytales.common.exceptions.LoginFailedException;
 import xyz.slimjim.hungrytales.service.api.AuthService;
 import xyz.slimjim.hungrytales.web.converter.LoginRequestDTOConverter;
 import xyz.slimjim.hungrytales.web.converter.RegisterRequestDTOConverter;
@@ -58,6 +59,10 @@ public class AuthController {
             responseDTO.setAuthToken(authService.createToken(user));
             dtoResponse.setData(responseDTO);
             dtoResponse.setResult(true);
+        } catch (LoginFailedException lex) {
+            dtoResponse.setErrorMessage(lex.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return dtoResponse;
         } catch (Exception ex) {
             log.error("Unable to process login", ex);
             dtoResponse.setErrorMessage(ex.getMessage());
