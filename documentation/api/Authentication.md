@@ -37,14 +37,14 @@ application/json
 }
 ```
 
-####200 Response
+#### 200 Response
 ```json
 {
   "result": true
 }
 ```
 
-####401 Response
+#### 401 Response
 ```json
 {
   "result": false,
