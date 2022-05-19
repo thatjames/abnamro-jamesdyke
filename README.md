@@ -16,9 +16,11 @@ Clone this repo and build the docker image with `docker build -t <your tag> .`
 
 ## Running
 
+A public docker image exists under `smokeycircles/hungrytales:latest`. Just define the envvars below to run it.
+
 Requires a postgresql installation to operate. Server must be pointed at this installation using java system properties
 
-`java -jar -Djdbc.url=$JDBC_URL -Djdbc.username=$JDBC_USERNAME -Djdbc.password=$JDBC_PASSWORD ./application-{version}.jar`
+`java -jar -Djdbc.url=$JDBC_URL -Djdbc.usern ame=$JDBC_USERNAME -Djdbc.password=$JDBC_PASSWORD ./application-{version}.jar`
 
 Where
 
@@ -30,3 +32,9 @@ There is also the following 2 options
 
 - server.port: define the listening port for the server
 - cors.hosts: CSV string for CORS Allowed Origins
+
+Documentation
+
+[High Level Architecture](documentation/Architecture.md)
+
+[API](documentation/api/API%20Documentation.md)
