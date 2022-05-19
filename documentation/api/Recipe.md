@@ -148,6 +148,7 @@ application/json
 
 ```json
 {
+  "id": 1,
   "author": "Some other cool dude",
   "title": "Test Recipe, updated",
   "createdDatetime": "2022-05-14 20:45",
@@ -247,7 +248,6 @@ application/json
 
 ```json
 {
-  "id": 1,
   "author": "Some other cool dude",
   "title": "Test Recipe, updated",
   "createdDatetime": "2022-05-14 20:45",
