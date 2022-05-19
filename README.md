@@ -33,7 +33,7 @@ There is also the following 2 options
 - server.port: define the listening port for the server
 - cors.hosts: CSV string for CORS Allowed Origins
 
-Documentation
+# Documentation
 
 [High Level Architecture](documentation/Architecture.md)
 
