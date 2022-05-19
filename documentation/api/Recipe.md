@@ -148,7 +148,6 @@ application/json
 
 ```json
 {
-  "id": 1,
   "author": "Some other cool dude",
   "title": "Test Recipe, updated",
   "createdDatetime": "2022-05-14 20:45",
@@ -326,56 +325,6 @@ Returns a list of all stored recipes
 #### 200 Response
 
 ```json
-{
-  "result": true,
-  "data": {
-    "id": 1,
-    "author": "James",
-    "title": "Test Recipe",
-    "createdDatetime": "2022-05-14 20:45",
-    "feeds": 2,
-    "ingredients": [
-      {
-        "name": "milk",
-        "amount": 500,
-        "unit": "ml"
-      },
-      {
-        "name": "flour",
-        "amount": 50,
-        "unit": "g"
-      }
-    ],
-    "instructions": [
-      {
-        "stepNumber": 1,
-        "instruction": "Pour milk into pan"
-      },
-      {
-        "stepNumber": 2,
-        "instruction": "Bring milk to boil"
-      },
-      {
-        "stepNumber": 3,
-        "instruction": "Turn down heat"
-      },
-      {
-        "stepNumber": 4,
-        "instruction": "Mix flour and milk"
-      },
-      {
-        "stepNumber": 5,
-        "instruction": "Simmer for 20 minutes"
-      },
-      {
-        "stepNumber": 6,
-        "instruction": "Serve"
-      }
-    ],
-    "vegetarian": false
-  }
-}
-jamesd@BBD-JD:/mnt/c/Users/James$ curl -s -H "Authorization:Bearer $HTTP_TOKEN" http://localhost:8080/recipe/list | jq
 {
   "result": true,
   "data": [
