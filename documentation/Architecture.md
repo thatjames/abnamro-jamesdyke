@@ -66,3 +66,9 @@ This token must be presented in the `Authorization: Bearer <Token>` Header, othe
 ## Recipes
 
 Registered users can create, get, edit, delete and list all recipes stored in the server. 
+
+## Security
+
+User passwords are salted and hashed and an encrypted token is used in place of a session id to elevate access to the `recipe` endpoint only for users who login.
+
+This token is encrypted with a keypair that is shuffled when the server restarts.
